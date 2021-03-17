@@ -1,10 +1,16 @@
 <?php
 session_start();
 define('API', 'https://api.exchangeratesapi.io/latest');
+$answer = getAnswer();
+$base =($answer->base);
+$currencyKeys = (array) $answer->rates;
+$currencyKeys = array_keys($currencyKeys);
+
 if(empty($_POST)){
-    $answer = getAnswer();
+  
     // $from = $_POST['fromSum'];
     // $to = $_POST['toSum'];
+
 }
 
 function getData(){
@@ -44,11 +50,19 @@ function getAnswer(){
     <form action='' method='post'>
     <input type='number' placeholder='from' name='fromSum'></input>
     <select name="" id="">
-    <option value="Curr"></option>
+        <?php
+        for ( $i = 0; $i < count($currencyKeys); $i++){
+            echo '<option value='. $currencyKeys[$i] .'>'. $currencyKeys[$i] .'</option>';
+        }
+        ?>
     </select>
     <input type='number' placeholder='to' name='toSum'></input>
     <select name="" id="">
-    <option value="Curr"></option>
+    <?php
+        for ( $i = 0; $i < count($currencyKeys); $i++){
+            echo '<option value='. $currencyKeys[$i] .'>'. $currencyKeys[$i] .'</option>';
+        }
+        ?>
     </select>
     <button type='submit'>Convert</button>
 </form>
