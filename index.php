@@ -1,19 +1,30 @@
 <?php
 session_start();
 define('API', 'https://api.exchangeratesapi.io/latest');
-$fromSum;
-$fromCur;
-$toSum;
-$toCur;
+define('DIR', __DIR__);
 if(!empty($_POST)){
-    $curl= curl_init();
-    curl_setopt($curl, CURLOPT_URL, API);
-    curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-    $answer = curl_exec($curl);
-    curl_close($curl);
-    $answer = json_decode($answer);
-
+    $answer = getAnswer();
 }
+
+function getData(){
+        $curl= curl_init();
+        curl_setopt($curl, CURLOPT_URL, $API);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+        $answer = curl_exec($curl);
+        curl_close($curl);
+        return $answer;
+}
+
+function getAnswer(){
+    if (!file_exists(DIR.'currencies.json')){
+        $answer = getData();
+        file_put_contents(DIR.'currencies.json', $answer);
+        return $answer;
+    } else {
+            return json_decode(file_get_contents(DIR.'currencies.json'));
+        } 
+    }
+
 
 ?>
 

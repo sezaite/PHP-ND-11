@@ -1,0 +1,38 @@
+body,
+body * {
+    margin: 0;
+    padding: 0;
+    vertical-align: top;
+    box-sizing: border-box;
+    font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    
+}
+
+body {
+    background-color: var(--backgroud-color);
+}
+
+:root{
+    --backgroud-color: #6FBDB7;
+    --main-color: #F9F6ED;
+    --secondary-color: #F77C51;
+    --darker-color: #43778C;
+}
+
+.converter {
+  display: inline-block;
+  width: 450px;
+  height: 300px;
+  text-align: center;
+  background-color: var(--main-color);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  
+}
+
+.converter h1 {
+    
+}
+
