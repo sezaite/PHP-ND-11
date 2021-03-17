@@ -1,15 +1,15 @@
 <?php
 session_start();
 define('API', 'https://api.exchangeratesapi.io/latest');
-if(empty($_POST)){
+define('DIR', __DIR__);
+$timeLimit = 300;
+if(!empty($_POST)){
     $answer = getAnswer();
-    // $from = $_POST['fromSum'];
-    // $to = $_POST['toSum'];
 }
 
 function getData(){
         $curl= curl_init();
-        curl_setopt($curl, CURLOPT_URL, API);
+        curl_setopt($curl, CURLOPT_URL, $API);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
         $answer = curl_exec($curl);
         curl_close($curl);
@@ -17,15 +17,19 @@ function getData(){
 }
 
 function getAnswer(){
-    if (!file_exists('currencies.json')){
+    if (!file_exists(DIR.'currencies.json')){
         $answer = getData();
-        file_put_contents('currencies.json', $answer);
+        file_put_contents(DIR.'currencies.json', $answer);
+        $timer = set_time_limit($timeLimit);
         return $answer;
     } else {
-            return json_decode(file_get_contents('currencies.json'));
-        } 
+        if ($timer) {
+            return json_decode(file_get_contents(DIR.'currencies.json'));
+        } else {
+            return getData();  
+        }
     }
-
+}
 
 ?>
 
@@ -42,11 +46,11 @@ function getAnswer(){
 <main class='converter'>
     <h1>Convert NOW only for 9.99!!!</h1>
     <form action='' method='post'>
-    <input type='number' placeholder='from' name='fromSum'></input>
+    <input type='number'></input>
     <select name="" id="">
     <option value="Curr"></option>
     </select>
-    <input type='number' placeholder='to' name='toSum'></input>
+    <input type='number'></input>
     <select name="" id="">
     <option value="Curr"></option>
     </select>

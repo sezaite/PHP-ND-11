@@ -1,32 +1,24 @@
 <?php
 session_start();
 define('API', 'https://api.exchangeratesapi.io/latest');
-if(empty($_POST)){
-    $answer = getAnswer();
-    // $from = $_POST['fromSum'];
-    // $to = $_POST['toSum'];
-}
+define('DIR', __DIR__);
+$timeLimit = 300;
 
-function getData(){
-        $curl= curl_init();
-        curl_setopt($curl, CURLOPT_URL, API);
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-        $answer = curl_exec($curl);
-        curl_close($curl);
-        return $answer;
-}
-
-function getAnswer(){
+if(!empty($_POST)){
     if (!file_exists('currencies.json')){
-        $answer = getData();
+        $answer = (new Helper)->getData(API);
         file_put_contents('currencies.json', $answer);
-        return $answer;
+        $timer = new Timer($timeLimit);
     } else {
-            return json_decode(file_get_contents('currencies.json'));
-        } 
+        if ($timer->timer) {
+            $answer = json_decode(file_get_contents(DIR.'useriai.json'));
+        } else {
+            $answer = (new Helper)->getData(API);
+           
+        }
     }
-
-
+}
+//jei timerio objektas buvo sukurtas funkcijos viduje, ar tas objektas numirsta uz scopo ribu?
 ?>
 
 <!DOCTYPE html>
@@ -42,11 +34,11 @@ function getAnswer(){
 <main class='converter'>
     <h1>Convert NOW only for 9.99!!!</h1>
     <form action='' method='post'>
-    <input type='number' placeholder='from' name='fromSum'></input>
+    <input type='number'></input>
     <select name="" id="">
     <option value="Curr"></option>
     </select>
-    <input type='number' placeholder='to' name='toSum'></input>
+    <input type='number'></input>
     <select name="" id="">
     <option value="Curr"></option>
     </select>
