@@ -32,7 +32,7 @@ if(!empty($_POST)){
             _d($_SESSION['to']);
         }
     }
-    $_SESSION['toSum'] = $_SESSION['fromSum'] * $_SESSION['from'] * $_SESSION['to'];
+    $_SESSION['toSum'] = ($_SESSION['fromSum'] * $_SESSION['to']) / $_SESSION['from'] ;
     header('Location: '.URL);
     die;
 }
