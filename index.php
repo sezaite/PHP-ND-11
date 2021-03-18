@@ -2,7 +2,19 @@
 session_start();
 if (!defined('API')) define('API', 'https://api.exchangeratesapi.io/latest');
 if (!defined('URL')) define('URL', 'http://localhost/bit/nd11/');
-$answer = json_decode(getAnswer(), true);
+if (!defined('TIME')) define('TIME', 15);
+
+if (!file_exists(__DIR__.'/data.json')) {
+    file_put_contents(__DIR__.'/data.json', 
+         json_encode([
+            'time' => time()-TIME-1, 
+            'data' => (object)[]
+            ])
+    );
+}
+$cache = json_decode(file_get_contents(__DIR__.'/data.json'));
+$answer = $cache->time < time()-TIME ? json_decode($cache->data) : json_decode(getAnswer(), true);  
+
 $rates = $answer['rates'];
 $currencyKeys = array_keys($rates);
 
