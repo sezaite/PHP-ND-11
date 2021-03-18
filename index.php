@@ -1,16 +1,28 @@
 <?php
 session_start();
 define('API', 'https://api.exchangeratesapi.io/latest');
-$answer = getAnswer();
-$base =($answer->base);
+$answer = json_decode(getAnswer());
 $currencyKeys = (array) $answer->rates;
 $currencyKeys = array_keys($currencyKeys);
 
-if(empty($_POST)){
-  
-    // $from = $_POST['fromSum'];
-    // $to = $_POST['toSum'];
-
+if(!empty($_POST)){
+    $fromSum = $_POST['fromSum'];
+    $from = $_POST['from'];
+    $to = $_POST['to'];
+    $rates = $answer->rates;
+    foreach($rates as $key => $rate){
+        if($from === $key){
+            $from = $rates[$key];
+            break;
+        } 
+    }
+    foreach($rates as $key => $rate){
+        if($to === $key){
+            $to = $rates[$key];
+            break;
+        } 
+    }
+    $_SESSION['toCur'] = $from * $to;
 }
 
 function getData(){
@@ -28,7 +40,7 @@ function getAnswer(){
         file_put_contents('currencies.json', $answer);
         return $answer;
     } else {
-            return json_decode(file_get_contents('currencies.json'));
+            return file_get_contents('currencies.json');
         } 
     }
 
@@ -48,26 +60,26 @@ function getAnswer(){
 <main class='converter'>
     <h1>Convert NOW only for 9.99!!!</h1>
     <form action='' method='post'>
-    <input type='number' placeholder='from' name='fromSum'></input>
-    <select name="" id="">
+    <input type='number' placeholder='Enter the amount' name='fromSum'></input>
+    <select name="from">
         <?php
         for ( $i = 0; $i < count($currencyKeys); $i++){
-            echo '<option value='. $currencyKeys[$i] .'>'. $currencyKeys[$i] .'</option>';
+            echo "<option value=". $currencyKeys[$i] .">". $currencyKeys[$i] ."</option>";
         }
         ?>
     </select>
-    <input type='number' placeholder='to' name='toSum'></input>
-    <select name="" id="">
+    <span class='label'>into</span>
+    <select name='to'>
     <?php
         for ( $i = 0; $i < count($currencyKeys); $i++){
-            echo '<option value='. $currencyKeys[$i] .'>'. $currencyKeys[$i] .'</option>';
+            echo "<option value=". $currencyKeys[$i] .">". $currencyKeys[$i] ."</option>";
         }
         ?>
     </select>
     <button type='submit'>Convert</button>
 </form>
     <?php 
-    if (isset($_SESSION['fromSum']) && isset($_SESSION['toSum'])){
+    if (isset($_SESSION['fromSum']) && isset($_SESSION['from']) && isset($_SESSION['to'])) {
         echo "<h2><?=$fromSum . $fromCur . 'converted into' . $toCur . 'equals' . $toSum ?></h2>";
         session_destroy();
     }
