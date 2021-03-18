@@ -1,29 +1,31 @@
 <?php
 session_start();
-define('API', 'https://api.exchangeratesapi.io/latest');
-$answer = json_decode(getAnswer());
-$currencyKeys = (array) $answer->rates;
-$currencyKeys = array_keys($currencyKeys);
+if (!defined('API')) define('API', 'https://api.exchangeratesapi.io/latest');
+if (!defined('URL')) define('URL', 'http://localhost/bit/nd11/');
+$answer = json_decode(getAnswer(), true);
+$rates = $answer['rates'];
+$currencyKeys = array_keys($rates);
 
 if(!empty($_POST)){
-    $fromSum = $_POST['fromSum'];
-    $from = $_POST['from'];
-    $to = $_POST['to'];
-    $rates = $answer->rates;
+    $_SESSION['fromSum'] =(int)$_POST['fromSum'];
     foreach($rates as $key => $rate){
-        if($from === $key){
-            $from = $rates[$key];
-            break;
+        if($key == $_POST['from']){
+            $_SESSION['from'] = $rates[$key];
+            $_SESSION['fromCur'] = $key;
+            _d($_SESSION['from']);
         } 
+        if($key == $_POST['to']){
+            $_SESSION['to'] = $rates[$key];
+            $_SESSION['toCur'] = $key;
+            _d($_SESSION['to']);
+        }
     }
-    foreach($rates as $key => $rate){
-        if($to === $key){
-            $to = $rates[$key];
-            break;
-        } 
-    }
-    $_SESSION['toCur'] = $from * $to;
+    $_SESSION['toSum'] = $_SESSION['fromSum'] * $_SESSION['from'] * $_SESSION['to'];
+    // _d($_SESSION['toSum']);
+    header('Location: '.URL);
+    die;
 }
+    
 
 function getData(){
         $curl= curl_init();
@@ -80,7 +82,7 @@ function getAnswer(){
 </form>
     <?php 
     if (isset($_SESSION['fromSum']) && isset($_SESSION['from']) && isset($_SESSION['to'])) {
-        echo "<h2><?=$fromSum . $fromCur . 'converted into' . $toCur . 'equals' . $toSum ?></h2>";
+        echo "<h2 class='result'>" . $_SESSION['fromSum'] ." ". $_SESSION['fromCur'] . " equals " . $_SESSION['toSum'] . " " . $_SESSION['toCur'] . "</h2>";
         session_destroy();
     }
     
