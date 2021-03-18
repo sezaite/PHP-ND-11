@@ -13,8 +13,7 @@ if (!file_exists(__DIR__.'/data.json')) {
     );
 }
 $cache = json_decode(file_get_contents(__DIR__.'/data.json'));
-$answer = $cache->time < time()-TIME ? (array) $cache->data : getData();  
-_d($answer);
+$answer = $cache->time > time()-TIME ? (array) $cache->data : getData();  
 $rates = $answer['rates'];
 $currencyKeys = array_keys($rates);
 
