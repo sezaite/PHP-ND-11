@@ -14,7 +14,8 @@ if (!file_exists(__DIR__.'/data.json')) {
 }
 $cache = json_decode(file_get_contents(__DIR__.'/data.json'));
 $answer = $cache->time > time()-TIME ? (array) $cache->data : getData();  
-$rates = $answer['rates'];
+$rates = (array) $answer['rates'];
+_d($rates);
 $currencyKeys = array_keys($rates);
 
 if(!empty($_POST)){
@@ -52,16 +53,6 @@ function getData(){
         );
         return $answer;
 }
-
-function getAnswer(){
-    if (!file_exists('currencies.json')){
-        $answer = getData();
-        file_put_contents('currencies.json', $answer);
-        return $answer;
-    } else {
-            return file_get_contents('currencies.json');
-        } 
-    }
 
 
 ?>
