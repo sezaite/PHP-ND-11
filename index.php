@@ -13,8 +13,8 @@ if (!file_exists(__DIR__.'/data.json')) {
     );
 }
 $cache = json_decode(file_get_contents(__DIR__.'/data.json'));
-$answer = $cache->time < time()-TIME ? json_decode($cache->data) : json_decode(getAnswer(), true);  
-
+$answer = $cache->time < time()-TIME ? (array) $cache->data : getData();  
+_d($answer);
 $rates = $answer['rates'];
 $currencyKeys = array_keys($rates);
 
@@ -33,7 +33,6 @@ if(!empty($_POST)){
         }
     }
     $_SESSION['toSum'] = $_SESSION['fromSum'] * $_SESSION['from'] * $_SESSION['to'];
-    // _d($_SESSION['toSum']);
     header('Location: '.URL);
     die;
 }
@@ -45,6 +44,13 @@ function getData(){
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
         $answer = curl_exec($curl);
         curl_close($curl);
+        $answer = json_decode($answer, true);
+        file_put_contents(__DIR__.'/data.json', 
+        json_encode([
+            'time' => time(), 
+            'data' => $answer
+            ])
+        );
         return $answer;
 }
 
